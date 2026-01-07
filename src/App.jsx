@@ -1,74 +1,50 @@
 import { useState } from 'react'
 
 const App = () => {
-  const [counter, setCounter] = useState(0)
-  const [left, setLeft] = useState(0)
-  const [right, setRight] = useState(0)
-  const [allClicks, setAllClicks] = useState([])
-  const [total, setTotal] = useState(0)
-  console.log('rendering with counter value', counter)
+    const [good, setGood] = useState(0)
+    const [neutral, setNeutral] = useState(0)
+    const [bad, setBad] = useState(0)
 
-  const setToZero = () => {
+    const total = good + neutral + bad
+    const average = total ? (good - bad) / total : 0
+    const positive = total ? (good / total) * 100 : 0
 
-    console.log('resetting to zero, value before', counter)
-    setCounter(0)
-  }
+    return (
+        <div>
+          <h1>give feedback</h1>
 
-  
-  const handleLeftClick = () => {
-    setAllClicks(allClicks.concat('L'))
-    const updatedLeft = left + 1
-    setLeft(updatedLeft)
-    setTotal(updatedLeft + right) 
-  }
+          <Button onClick={() => setGood(g => g + 1)} text="good" />
+          <Button onClick={() => setNeutral(n => n + 1)} text="neutral" />
+          <Button onClick={() => setBad(b => b + 1)} text="bad" />
 
-  const handleRightClick = () =>{
-    setAllClicks(allClicks.concat('R'))
-    const updatedRight = right + 1
-    setRight(updatedRight)
-    setTotal(left + updatedRight) 
-  }
-
-  return (
-    <div>
-      {right}
-      <Display counter={counter} />
-      <Button onClick={handleRightClick} text="right" />
-      <Button onClick={setToZero} text="zero" />
-      <Button onClick={handleLeftClick} text="left" />
-      {left}
-      <History allClicks={allClicks} />
-    </div>
-  )
-} 
+          <h1>statistics</h1>
+          <Statistics
+            good={good}
+            neutral={neutral}
+            bad={bad}
+            all={total}
+            average={average}
+            positive={positive}
+          />
+        </div>
+    )
+}
 
 export default App
 
-const Display = (props) => {
-  return (
-    <div>{props.counter}</div>
-  )
-}
+const Button = ({ onClick, text }) => <button onClick={onClick}>{text}</button>
 
-const Button = (props) => {
-  return (
-    <button onClick={props.onClick}>
-      {props.text}
-    </button>
-  )
-}
+const Statistics = ({ good, neutral, bad, all, average, positive }) => {
+    if (all === 0) return <div>No feedback given</div>
 
-const History = (props) => {
-    if(props.allClicks.length === 0) {
-      return (
-        <div>
-          the app is used by pressing the buttons
-        </div>
-      )
-    }
     return (
       <div>
-        button press history: {props.allClicks.join(' ')}
+        <div>good {good}</div>
+        <div>neutral {neutral}</div>
+        <div>bad {bad}</div>
+        <div>all {all}</div>
+        <div>average {average}</div>
+        <div>positive {positive} %</div>
       </div>
     )
-} 
+}
