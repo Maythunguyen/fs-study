@@ -1,53 +1,90 @@
-import { useState } from 'react'
 
 const App = () => {
-  const anecdotes = [
-    'If it hurts, do it more often.',
-    'Adding manpower to a late software project makes it later!',
-    'The first 90 percent of the code accounts for the first 90 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.',
-    'Any fool can write code that a computer can understand. Good programmers write code that humans can understand.',
-    'Premature optimization is the root of all evil.',
-    'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.',
-    'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when diagnosing patients.',
-    'The only way to go fast, is to go well.'
+  const courses = [
+    {
+      name: 'Half Stack application development',
+      id: 1,
+      parts: [
+        {
+          name: 'Fundamentals of React',
+          exercises: 10,
+          id: 1
+        },
+        {
+          name: 'Using props to pass data',
+          exercises: 7,
+          id: 2
+        },
+        {
+          name: 'State of a component',
+          exercises: 14,
+          id: 3
+        },
+        {
+          name: 'Redux',
+          exercises: 11,
+          id: 4
+        }
+      ]
+    }, 
+    {
+      name: 'Node.js',
+      id: 2,
+      parts: [
+        {
+          name: 'Routing',
+          exercises: 3,
+          id: 1
+        },
+        {
+          name: 'Middlewares',
+          exercises: 7,
+          id: 2
+        }
+      ]
+    }
   ]
-   
-  const [selected, setSelected] = useState(0)
-  const [votes, setVotes] = useState(Array(anecdotes.length).fill(0))
 
-  const handleClick = () => {
-    const randomIndex = Math.floor(Math.random() * anecdotes.length)
-    setSelected(randomIndex)
-  }
-
-  const handleVote = () => {
-    const newVotes = [...votes]
-    newVotes[selected] += 1
-    setVotes(newVotes)
-  }
 
   return (
     <div>
-      <h1>Anecdote of the day</h1>
-      <Button onClick={handleClick} text="next anecdote" />
-      {anecdotes[selected]}
-      <Button onClick={handleVote} text="vote" />
-      <p>has {votes[selected]} votes</p>
-
-      <h1>Anecdote with most votes</h1>
-      {anecdotes[votes.indexOf(Math.max(...votes))]}
-      <p>has {Math.max(...votes)} votes</p>
-
+      <h1>Web Development Curriculum</h1>
+      {courses.map(course => (
+        <Course key={course.id} course={course} />
+      ))}
     </div>
   )
 }
 
 export default App
 
-const Button = (props) => {
+const Course = ({course}) => {
   return (
-    <button onClick={props.onClick}>
-      {props.text}
-    </button>
+    <div>
+      <Header course={course.name} />
+      <Content parts={course.parts} />
+      <Total parts={course.parts} />
+    </div>
   )
+}
+
+const Header = ({course}) => {
+  return <h1>{course}</h1>
+}
+
+const Content = ({parts}) => {
+  return (
+    <div>
+      {parts.map(part => (
+        <p key={part.id}>
+          {part.name} {part.exercises}
+        </p>
+      ))}
+    </div>
+  )
+}
+
+const Total = ({parts}) => {
+  const total = parts.reduce((sum, part) => sum + part.exercises, 0)
+  return <p>Total of {total} exercises </p>
 }
