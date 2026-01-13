@@ -1,90 +1,81 @@
+import { useState } from 'react'
 
 const App = () => {
-  const courses = [
-    {
-      name: 'Half Stack application development',
-      id: 1,
-      parts: [
-        {
-          name: 'Fundamentals of React',
-          exercises: 10,
-          id: 1
-        },
-        {
-          name: 'Using props to pass data',
-          exercises: 7,
-          id: 2
-        },
-        {
-          name: 'State of a component',
-          exercises: 14,
-          id: 3
-        },
-        {
-          name: 'Redux',
-          exercises: 11,
-          id: 4
-        }
-      ]
-    }, 
-    {
-      name: 'Node.js',
-      id: 2,
-      parts: [
-        {
-          name: 'Routing',
-          exercises: 3,
-          id: 1
-        },
-        {
-          name: 'Middlewares',
-          exercises: 7,
-          id: 2
-        }
-      ]
-    }
-  ]
+  const [persons, setPersons] = useState([
+    { name: 'Arto Hellas', number: '040-123456', id: 1 },
+    { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
+    { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
+    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
+  ])
+  const [newName, setNewName] = useState('')
+  const [newNumber, setNewNumber] = useState('')
 
+  const handleNameChange = (event) => {
+    setNewName(event.target.value)
+  }
+  const handleNumberChange = (event) => {
+    setNewNumber(event.target.value)
+  }
+
+  const handleAdd = (event) => {
+    event.preventDefault()
+    const personObject = {
+      name: newName,
+      number: newNumber
+    }
+    if (persons.find(person => person.name === newName)) {
+      alert(`${newName} is already added to phonebook`)
+      return
+    }
+    setPersons(persons.concat(personObject))
+    setNewName('')
+    setNewNumber('')
+    console.log('Added', personObject)
+  }
 
   return (
     <div>
-      <h1>Web Development Curriculum</h1>
-      {courses.map(course => (
-        <Course key={course.id} course={course} />
-      ))}
+      <h2>Phonebook</h2>
+      <PersonForm 
+        handleAdd={handleAdd} 
+        newName={newName} 
+        handleNameChange={handleNameChange}
+        newNumber={newNumber}
+        handleNumberChange={handleNumberChange}
+      />
+      <h2>Numbers</h2>
+      <div>
+        <Persons persons={persons} /> 
+        
+      </div>
     </div>
   )
 }
 
 export default App
 
-const Course = ({course}) => {
+const PersonForm = (props) => {
   return (
-    <div>
-      <Header course={course.name} />
-      <Content parts={course.parts} />
-      <Total parts={course.parts} />
-    </div>
+    <form onSubmit={props.handleAdd}>
+      <div>
+        name: <input value={props.newName} onChange={props.handleNameChange}/>
+      </div>
+      <div>
+        number: <input value={props.newNumber} onChange={props.handleNumberChange}/>
+      </div>
+      <div>
+        <button type="submit">add</button>
+      </div>
+    </form>
   )
 }
 
-const Header = ({course}) => {
-  return <h1>{course}</h1>
-}
-
-const Content = ({parts}) => {
+const Persons = (props) => {
   return (
     <div>
-      {parts.map(part => (
-        <p key={part.id}>
-          {part.name} {part.exercises}
-        </p>
-      ))}
+      {props.persons.map((person, idx) => 
+        <p key={idx}>{person.name} {person.number}</p>  
+      )}
     </div>
   )
-}
-
-const Total = ({parts}) => {
-  const total = parts.reduce((sum, part) => sum + part.exercises, 0)
-  return <p>Total of {total} exercises </p>
 }
